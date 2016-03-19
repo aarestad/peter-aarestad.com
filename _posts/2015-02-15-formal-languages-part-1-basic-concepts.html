@@ -1,0 +1,62 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Formal Languages, Part 1: Basic Concepts'
+author:
+  display_name: Peter
+  login: admin
+  email: aarestad@gmail.com
+  url: http://www.peter-aarestad.com/blog/
+author_login: admin
+author_email: aarestad@gmail.com
+author_url: http://www.peter-aarestad.com/blog/
+wordpress_id: 118
+wordpress_url: http://www.peter-aarestad.com/blog/?p=118
+date: '2015-02-15 20:22:23 -0600'
+date_gmt: '2015-02-16 01:22:23 -0600'
+categories:
+- Uncategorized
+- Formal Languages
+tags: []
+comments: []
+---
+<p>Last week, there was a <a href="http:&#47;&#47;www.catonmat.net&#47;blog&#47;perl-regex-that-matches-prime-numbers&#47;">link<&#47;a>&Acirc;&nbsp;posted on Hacker News that described a regular expression that only matches non-prime numbers (expressed as a string of "1"s, i.e. in so-called "unary" notation):</p>
+<p>[pl]&#47;^1?$|^(11+?)\1+$&#47;[&#47;pl]</p>
+<p><a href="https:&#47;&#47;news.ycombinator.com&#47;item?id=3391547">Commenters<&#47;a> noted that this is not a&Acirc;&nbsp;<em>real<&#47;em> regular expression. But what does that mean? Anyone with experience in Perl regular expressions can see that this clearly will work just fine; the linked article does a good job of breaking down how this goes about matching (or not matching) a given string of 1s. You see, the history of Unix has sort of muddied the term "regular expression" to the point that it means something in practice that&Acirc;&nbsp;is broader than the theory. Originally, the old Unix command line tool <code>grep<&#47;code> was designed with classical "regular expressions" in mind. However, as is well-known, classical regular expressions are very limited, and so a separate tool called <code>egrep<&#47;code> was written to accept so-called "extended regular expressions", and eventually <code>egrep<&#47;code>'s notion of an extended RE is what we now call a "regular expression".</p>
+<p>So what is a "classical" regular expression? To explore that question, we need to look into the field called "formal languages". Despite the name, the field has little to do with programming languages or spoken languages, although it is used in theoretical studies of these kinds of language. Formal language study is the study of patterns, in a way. It asks: what is the simplest pattern which can describe&Acirc;&nbsp;this (usually infinite) set of strings? So to understand what a regular expression is, we need to set down some definitions first that will allow us to talk about formal languages in general. Once we do that, we can talk about the family of so-called "regular languages" that regular expressions encompass, and go beyond that to define more powerful languages.</p>
+<h2>Basic concepts of formal languages<&#47;h2></p>
+<p>A&Acirc;&nbsp;<strong>language<&#47;strong> is just a set of&Acirc;&nbsp;<strong>string<&#47;strong>s that are constructed from an&Acirc;&nbsp;<strong>alphabet<&#47;strong>. An alphabet is simply a finite set of symbols such as 'a', 'b', 'c', etc. Traditionally, an alphabet is denoted with the symbol &Sigma;. Strings are composed of zero or more symbols from the alphabet - the so-called&Acirc;&nbsp;<strong>empty string<&#47;strong> is traditionally denoted by&Acirc;&nbsp;&lambda;.</p>
+<p>Since strings can contain many consecutive copies of a particular symbol, we can use a shorthand to represent repetition:</p>
+<p>a<sup>n<&#47;sup> = aaaaaa&hellip; (n times)</p>
+<p>For n = 0, we define </p>
+<p>a<sup>0<&#47;sup> = &lambda;</p>
+<p>When starting with an alphabet &Sigma;, it's useful to talk about the possible strings it can make. &Sigma;<sup>*<&#47;sup> is the set of all strings consisting of zero or more symbols from &Sigma;. So say that our alphabet was very simple: it just consisted of {a}. In this case,</p>
+<p>&Sigma;<sup>*<&#47;sup> = { &lambda;, a, aa, aaa, aaaa, &hellip; }</p>
+<p>or, more succintly,</p>
+<p>&Sigma;<sup>*<&#47;sup> = { a<sup>n<&#47;sup> : n &ge; 0 }</p>
+<p>&Sigma;<sup>*<&#47;sup> always contains &lambda;; if we want to exclude it, we define</p>
+<p>&Sigma;<sup>+<&#47;sup> = &Sigma;<sup>*<&#47;sup> - { &lambda; }</p>
+<p>A language, then, is just a subset of &Sigma;<sup>*<&#47;sup> - perhaps in a way we can define succinctly, perhaps not. A string that is a member of a language is called a <strong>sentence<&#47;strong>. Remember, these are formal, abstract terms, so don't get too hung-up on the real meaning of "language" or "sentence" here.</p>
+<p>Finally, we have the concept of "grammars". Again, this isn't like a grammar you're used to, although it's quite close! Sentences in various languages can only be constructed in certain ways; some (like English) are subject-verb-object, some (like Japanese) are subject-object-verb; even others use different combinations. So a basic grammar rule in English is expressed as:</p>
+<p>[sentence] &rArr; [subject] [verb] [object]</p>
+<p>Subjects and objects can be further defined as agglomerations of nouns and articles and such. In the same way, we define grammars with our languages and alphabets:</p>
+<p>G = (V, T, S, P)</p>
+<p>G is a <strong>grammar<&#47;strong> described as a combination of three sets and one element:</p>
+<ul>
+<li>V is defined as a set of <b>variables<&#47;b>; as few as one. These are usually denoted with capital letters such as S, A, B, etc.<&#47;li>
+<li>T is defined as a set of <b>terminal symbols<&#47;b>. This is almost always the alphabet &Sigma; that we are already familiar with<&#47;li>
+<li>S is a single member of V, referred to as the <b>start variable<&#47;b>; by convention, it's usually just the letter S. This variable is assumed to be, naturally, the start of any derivation using our grammar.<&#47;li>
+<li>P is a set of <b>productions<&#47;b> similar to our grammar rule above. Productions can contain any number of variables and&#47;or terminal symbols on either side of the arrow, though we specify that the left side contains at least one symbol, while the right side can be empty (i.e. &lambda;).<br />
+<&#47;ul></p>
+<p>A language, thus, can be defined as all the sentences such that there is some chain of productions in P called a <b>derivation<&#47;b> that produces the sentences - we denote this language as L(G), or the language derived from the grammar G.</p>
+<p>To wrap up, here's a simple grammar:</p>
+<p>G = ({S}, {a, b}, S, P)</p>
+<p>where P is given by the two productions:</p>
+<p>S &rArr; aSb<br />
+S &rArr; &lambda;</p>
+<p>We can derive the sentence "aabb" as so:</p>
+<p>S &rArr; aSb &rArr; aaSbb &rArr; aabb</p>
+<p>By applying the first rule 0 or more times, followed by the second rule, it's pretty easy to see that this grammar defines a fairly simple language:</p>
+<p>L(G) = { a<sup>n<&#47;sup>b<sup>n<&#47;sup> : n &ge; 0 }</p>
+<p>So now we can talk about formal languages. Next time, we'll actually get into regular languages, although along the way we will have to detour and talk about "automata". Robots? Well, not really. More like a robot that defines a language. :)</p>

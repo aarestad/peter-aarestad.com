@@ -1,0 +1,43 @@
+---
+layout: post
+status: publish
+published: true
+title: Foreign key declarations in MySQL
+author:
+  display_name: Peter
+  login: admin
+  email: aarestad@gmail.com
+  url: http://www.peter-aarestad.com/blog/
+author_login: admin
+author_email: aarestad@gmail.com
+author_url: http://www.peter-aarestad.com/blog/
+wordpress_id: 63
+wordpress_url: http://www.peter-aarestad.com/blog/?p=63
+date: '2014-04-26 18:02:19 -0500'
+date_gmt: '2014-04-26 23:02:19 -0500'
+categories:
+- Geekiness
+tags: []
+comments: []
+---
+<p>In my few years working closely with MySQL, I've found something surprising about how foreign keys are declared.&Acirc;&nbsp;For the longest time, I've been used to declaring foreign keys like so:</p>
+<p>[code lang="sql"]create table foo (<br />
+foo_id int(11) primary key auto_increment,<br />
+-- ...<br />
+);</p>
+<p>create table bar (<br />
+bar_id int(11) primary key auto_increment,<br />
+foo_id int(11) not null references foo(foo_id),<br />
+-- ...<br />
+);[&#47;code]</p>
+<p>After a while, I started noticing that foreign key constraints were not being enforced like I thought they would be. When I looked at the <code>SHOW CREATE TABLE<&#47;code> statement for these tables, I found something surprising: the foreign keys were not created! After a bit of frustration, I took to the internet, and found the following quote in <a href="https:&#47;&#47;dev.mysql.com&#47;doc&#47;refman&#47;5.6&#47;en&#47;create-table-foreign-keys.html">MySQL's documentation<&#47;a>:</p>
+<blockquote><p>MySQL does not recognize or support "inline REFERENCES specifications&acirc;&euro; (as defined in the SQL standard) where the references are defined as part of the column specification. MySQL accepts REFERENCES clauses <strong>only<&#47;strong> when specified as part of a separate FOREIGN KEY specification.<&#47;blockquote></p>
+<p>(emphasis mine)</p>
+<p>What's worse, when you try to use an "inline REFERENCES" as above, MySQL will silently ignore it! I hunted around a bit to see if I could find any way to make this syntax a fatal error, but there doesn't seem to be. So anyway, you need to create foreign keys the "long way" in MySQL:</p>
+<p>[code lang="sql"]create table bar (<br />
+bar_id int(11) primary key auto_increment,<br />
+foo_id int(11) not null,<br />
+-- ...<br />
+foreign key bar_foo_id (foo_id) references foo(foo_id)<br />
+);[&#47;code]</p>
+<p>It's frustrating that the inline REFERENCES is just ignored instead of treated as a syntax error - it fools you into thinking that your DDL was fully processed, but you don't get so much as a warning that it was not processed 100% as you might expect. Does anyone know why don't just treat this as an error? To me it seems like bad behavior on MySQL's part. Maybe it's time to switch to PostgreSQL. :P</p>
